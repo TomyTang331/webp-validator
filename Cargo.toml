@@ -1,0 +1,14 @@
+[package]
+name = "webp_validator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+image-webp = "0.2.4"
+
+[build-dependencies]
+cbindgen = "0.26"
+
+[lib]
+name = "webp_validator"
+crate-type = ["cdylib", "rlib"]
