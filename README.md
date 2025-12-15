@@ -1,41 +1,41 @@
 # WebP Validator
 
-Rust实现的WebP图片格式校验库，提供C FFI接口供Go等其他语言调用。
+A Rust-based WebP image format validator with C FFI interface for cross-language integration.
 
-## 项目结构
+## Project Structure
 
 ```
 webp_validator/
-├── src/                    # Rust源码
-│   ├── lib.rs              # Rust库（FFI接口）
-│   └── main.rs             # Rust示例
-├── include/                # C头文件
+├── src/                    # Rust source code
+│   ├── lib.rs              # Rust library with FFI interface
+│   └── main.rs             # Rust example
+├── include/                # C header files
 │   └── webp_validator.h
-├── lib/                    # 动态库目录
+├── lib/                    # Dynamic library directory
 │   ├── webp_validator.dll      # Windows
 │   └── libwebp_validator.so    # Linux
-├── go_pkg/                 # Go示例和测试
+├── go_pkg/                 # Go examples and tests
 │   ├── main.go
 │   ├── validator_windows.go
 │   ├── validator_linux.go
 │   └── validator_test.go
-├── images/                 # 测试图片
+├── images/                 # Test images
 └── Cargo.toml
 ```
 
-## 功能特性
+## Features
 
-- ✅ 校验WebP格式合法性
-- ✅ 检测动态/静态WebP
-- ✅ 提取元数据（宽高、透明通道、帧数）
-- ✅ 识别伪造WebP文件
-- ✅ C FFI接口，支持多语言调用
+- ✅ Validate WebP format compliance
+- ✅ Detect animated/static WebP
+- ✅ Extract metadata (width, height, alpha channel, frame count)
+- ✅ Identify fake WebP files
+- ✅ C FFI interface for multi-language support
 
 ---
 
-## 快速开始
+## Quick Start
 
-### 编译动态库
+### Build Dynamic Library
 
 **Windows:**
 ```powershell
@@ -51,19 +51,19 @@ mkdir -p lib
 cp target/release/libwebp_validator.so lib/
 ```
 
-### Rust使用
+### Rust Usage
 
 ```bash
-# 运行测试
+# Run tests
 cargo test
 
-# 运行示例
+# Run example
 cargo run
 ```
 
-### Go使用
+### Go Usage
 
-**运行示例:**
+**Run Example:**
 ```bash
 cd go_pkg
 
@@ -71,11 +71,12 @@ cd go_pkg
 $env:PATH = "$(Resolve-Path ..\lib);$env:PATH"
 go run .
 
-# Linux（已配置rpath，无需设置环境变量）
+# Linux (requires LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH=../lib:$LD_LIBRARY_PATH
 go run .
 ```
 
-**运行测试:**
+**Run Tests:**
 ```bash
 cd go_pkg
 
@@ -84,15 +85,16 @@ $env:PATH = "$(Resolve-Path ..\lib);$env:PATH"
 go test -v
 
 # Linux
+export LD_LIBRARY_PATH=../lib:$LD_LIBRARY_PATH
 go test -v
 
-# 标准库对比测试（证明stdlib无法处理动态WebP）
-go test -v -run TestCompareWithStdLib
+# Compare with Go stdlib (proves stdlib cannot handle animated WebP)
+LD_LIBRARY_PATH=../lib go test -v -run TestCompareWithStdLib
 ```
 
 ---
 
-## API示例
+## API Examples
 
 ### Rust API
 
@@ -127,49 +129,61 @@ if info.IsValid {
 
 ---
 
-## 部署
+## Deployment
 
-### 开发环境
+### Development Environment
 
 **Windows:**
-- 将 `lib` 目录添加到PATH环境变量
-- 或复制DLL到可执行文件同目录
+- Add `lib` directory to PATH environment variable
+- Or copy DLL to executable directory
 
 **Linux:**
-- Go程序已配置rpath，自动从 `../lib` 加载
-- 或设置 `LD_LIBRARY_PATH=../lib`
+- Set `LD_LIBRARY_PATH` to include `lib` directory:
+  ```bash
+  export LD_LIBRARY_PATH=/path/to/project/lib:$LD_LIBRARY_PATH
+  ```
 
-### 生产环境
+### Production Environment
 
-**Linux系统级安装:**
+**Linux System-wide Installation:**
 ```bash
 sudo cp lib/libwebp_validator.so /usr/local/lib/
 sudo ldconfig
 ```
 
+**Then run Go programs without LD_LIBRARY_PATH:**
+```bash
+go run .
+go test -v
+```
+
 ---
 
-## 常见问题
+## FAQ
 
-**Q: Windows运行时找不到DLL？**
+**Q: Windows can't find DLL at runtime?**
 
-A: 添加lib目录到PATH：
+A: Add lib directory to PATH:
 ```powershell
 $env:PATH = "$(Resolve-Path lib);$env:PATH"
 ```
 
-**Q: Linux加载.so失败？**
+**Q: Linux fails to load .so file?**
 
-A: Go程序已配置rpath，直接运行即可。或手动设置：
+A: Set LD_LIBRARY_PATH environment variable:
 ```bash
-export LD_LIBRARY_PATH=lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=../lib:$LD_LIBRARY_PATH
+# Or use inline:
+LD_LIBRARY_PATH=../lib go test -v
 ```
 
-**Q: Go找不到头文件？**
+For system-wide installation, copy to `/usr/local/lib/` and run `ldconfig`.
 
-A: 确保 `include/webp_validator.h` 存在，Go代码引用路径为 `../include/webp_validator.h`
+**Q: Go can't find header file?**
 
-**Q: 如何验证动态库？**
+A: Ensure `include/webp_validator.h` exists. Go code references it as `../include/webp_validator.h`.
+
+**Q: How to verify the dynamic library?**
 
 ```bash
 # Linux
@@ -182,26 +196,36 @@ dir lib\webp_validator.dll
 
 ---
 
-## 技术亮点
+## Technical Highlights
 
-### Go标准库对比
+### Go Standard Library Comparison
 
-项目包含测试证明Go标准库 `golang.org/x/image/webp` 无法处理动态WebP：
+This project includes tests that prove Go's standard library `golang.org/x/image/webp` cannot handle animated WebP:
 
 ```bash
-go test -v -run TestCompareWithStdLib
+LD_LIBRARY_PATH=../lib go test -v -run TestCompareWithStdLib
 ```
 
-- ✅ Rust库：完整支持动态WebP，提取帧数等元数据
-- ❌ Go标准库：无法处理动态WebP文件（会报错）
+**Test Results:**
+- ✅ **Rust library**: Full animated WebP support, extracts frame count and metadata
+- ❌ **Go stdlib**: Cannot decode animated WebP files (returns error)
 
-### 平台适配
+**Example Output:**
+```
+=== RUN   TestCompareWithStdLib
+    validator_test.go:87: rust library result: valid=true, animated=true, frames=46
+    validator_test.go:94: golang stdlib result: error (expected) - invalid image file: webp: invalid format
+    validator_test.go:95: this proves golang stdlib cannot handle animated webp files
+--- PASS: TestCompareWithStdLib (0.00s)
+```
 
-- **Windows**: 使用 `validator_windows.go`
-- **Linux**: 使用 `validator_linux.go`，配置rpath自动加载库
+### Platform Adaptation
+
+- **Windows**: Uses `validator_windows.go` with PATH-based library loading
+- **Linux**: Uses `validator_linux.go` with rpath configuration (requires LD_LIBRARY_PATH for `go test`)
 
 ---
 
-## 许可证
+## License
 
 MIT License
