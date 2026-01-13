@@ -1,6 +1,20 @@
 # WebP Validator
 
-A Rust-based WebP image format validator with C FFI interface for cross-language integration.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
+[![Go](https://img.shields.io/badge/Go-1.18%2B-00ADD8.svg)](https://golang.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg)](https://github.com/TomyZhang331/WebpValidator)
+
+A high-performance WebP image format validator built with Rust, featuring C FFI interface for seamless cross-language integration. This library provides comprehensive WebP validation capabilities, including support for animated WebP files that Go's standard library cannot handle.
+
+## Key Features
+
+- ✅ **Full WebP Support**: Validate both static and animated WebP formats
+- ✅ **Metadata Extraction**: Get image dimensions, alpha channel info, and frame counts
+- ✅ **Fake Detection**: Identify incorrectly renamed non-WebP files
+- ✅ **Cross-Language**: C FFI interface for use in Go, Python, Node.js, and more
+- ✅ **High Performance**: Built with Rust for optimal speed and safety
+- ✅ **Zero Dependencies**: Minimal runtime dependencies for easy deployment
 
 ## Project Structure
 
@@ -23,17 +37,9 @@ webp_validator/
 └── Cargo.toml
 ```
 
-## Features
-
-- ✅ Validate WebP format compliance
-- ✅ Detect animated/static WebP
-- ✅ Extract metadata (width, height, alpha channel, frame count)
-- ✅ Identify fake WebP files
-- ✅ C FFI interface for multi-language support
-
 ---
 
-## Quick Start
+## Installation & Setup
 
 ### Build Dynamic Library
 
